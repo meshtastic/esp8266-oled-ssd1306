@@ -1049,7 +1049,8 @@ void OLEDDisplay::sendInitCommands(void) {
   sendCommand(DISPLAYALLON_RESUME);
   sendCommand(NORMALDISPLAY);
   sendCommand(0x2e);            // stop scroll
-  sendCommand(DISPLAYON);
+  if (!delayPoweron)
+    sendCommand(DISPLAYON);
 }
 
 void inline OLEDDisplay::drawInternal(int16_t xMove, int16_t yMove, int16_t width, int16_t height, const uint8_t *data, uint16_t offset, uint16_t bytesInData) {
