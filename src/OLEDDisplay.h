@@ -345,6 +345,8 @@ class OLEDDisplay : public Stream {
     uint8_t            *buffer_back;
     #endif
 
+    bool delayPoweron = false;
+
     // Set the correct height, width and buffer for the geometry
     void setGeometry(OLEDDISPLAY_GEOMETRY g, uint16_t width = 0, uint16_t height = 0);
 
