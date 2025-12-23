@@ -329,6 +329,9 @@ class OLEDDisplay : public Stream {
     uint16_t getHeight(void);
 
     // Implement needed function to be compatible with Print class
+#ifdef ARDUINO
+    using Print::write;
+#endif
     size_t write(uint8_t c);
     size_t write(const char* s);
 
