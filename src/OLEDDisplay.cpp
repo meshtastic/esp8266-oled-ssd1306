@@ -1077,11 +1077,11 @@ void inline OLEDDisplay::drawInternal(int16_t xMove, int16_t yMove, int16_t widt
 
     uint8_t currentByte = pgm_read_byte(data + offset + i);
 
-    int16_t xPos = xMove + (i / rasterHeight);
-    int16_t yPos = ((yMove >> 3) + (i % rasterHeight)) * this->width();
+    int32_t xPos = xMove + (i / rasterHeight);
+    int32_t yPos = ((yMove >> 3) + (i % rasterHeight)) * this->width();
 
 //    int16_t yScreenPos = yMove + yOffset;
-    int16_t dataPos    = xPos  + yPos;
+    int32_t dataPos    = xPos  + yPos;
 
     if (dataPos >=  0  && dataPos < displayBufferSize &&
         xPos    >=  0  && xPos    < this->width() ) {
