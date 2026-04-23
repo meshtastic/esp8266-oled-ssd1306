@@ -54,6 +54,7 @@ class SSD1306Wire : public OLEDDisplay {
       bool                _doI2cAutoInit = false;
       TwoWire*            _wire = NULL;
       int                 _frequency;
+      uint8_t             _y_offset = 0;  // vertical page offset applied in display()
 
   public:
 
@@ -103,6 +104,15 @@ class SSD1306Wire : public OLEDDisplay {
       return true;
     }
 
+    /**
+     * Shift all output downward by N pages (N * 8 rows). Used by panels whose
+     * visible window does not start at row 0 of the SSD1306/SSD1315 GDDRAM —
+     * e.g. 72x40 modules whose active area maps to pages 3..7.
+     */
+    void setYOffset(uint8_t y_offset_pages) {
+      _y_offset = y_offset_pages;
+    }
+
     void display(void) {
       initI2cIfNeccesary();
       const int x_offset = (128 - this->width()) / 2;
@@ -141,8 +151,8 @@ class SSD1306Wire : public OLEDDisplay {
         sendCommand(x_offset + maxBoundX);
 
         sendCommand(PAGEADDR);
-        sendCommand(minBoundY);
-        sendCommand(maxBoundY);
+        sendCommand(minBoundY + _y_offset);
+        sendCommand(maxBoundY + _y_offset);
 
         uint8_t k = 0;
         for (y = minBoundY; y <= maxBoundY; y++) {
@@ -172,7 +182,7 @@ class SSD1306Wire : public OLEDDisplay {
         sendCommand(x_offset + (this->width() - 1));
 
         sendCommand(PAGEADDR);
-        sendCommand(0x0);
+        sendCommand(_y_offset);
 
         for (uint16_t i=0; i < displayBufferSize; i++) {
           _wire->beginTransmission(this->_address);

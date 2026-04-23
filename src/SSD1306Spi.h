@@ -46,6 +46,7 @@ class SSD1306Spi : public OLEDDisplay {
       uint8_t             _dc;
       uint8_t             _cs;
       uint8_t             _h_offset = 0;
+      uint8_t             _y_offset = 0;
 
 
   public:
@@ -60,6 +61,10 @@ class SSD1306Spi : public OLEDDisplay {
 
     void setHorizontalOffset(uint8_t h_offset) {
       _h_offset = h_offset;
+    }
+
+    void setYOffset(uint8_t y_offset_pages) {
+      _y_offset = y_offset_pages;
     }
 
     bool connect(){
@@ -117,8 +122,8 @@ class SSD1306Spi : public OLEDDisplay {
        sendCommand(maxBoundX + _h_offset);
 
        sendCommand(PAGEADDR);
-       sendCommand(minBoundY);
-       sendCommand(maxBoundY);
+       sendCommand(minBoundY + _y_offset);
+       sendCommand(maxBoundY + _y_offset);
 
        set_CS(HIGH);
        digitalWrite(_dc, HIGH);   // data mode
