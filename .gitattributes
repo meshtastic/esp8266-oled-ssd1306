@@ -1,0 +1,15 @@
+# Force LF line endings on source files so patches authored on LF systems
+# apply cleanly on Windows checkouts (where Git's core.autocrlf=true would
+# otherwise convert these to CRLF and break unified-diff context matching).
+*.h    text eol=lf
+*.cpp  text eol=lf
+*.ino  text eol=lf
+*.md   text eol=lf
+*.json text eol=lf
+*.txt  text eol=lf
+*.mk   text eol=lf
+
+# Treat known binaries as binary
+*.png  binary
+*.jpg  binary
+*.bin  binary
