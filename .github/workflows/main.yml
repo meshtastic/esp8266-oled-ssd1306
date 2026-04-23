@@ -13,24 +13,26 @@ jobs:
         example: [examples/SSD1306UiDemo, examples/SSD1306SimpleDemo, examples/SSD1306DrawingDemo, examples/SSD1306OTADemo, examples/SSD1306ClockDemo, examples/SSD1306TwoScreenDemo]
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Cache pip
-      uses: actions/cache@v3
+      uses: actions/cache@v5
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: ${{ runner.os }}-pip-
     - name: Cache PlatformIO
-      uses: actions/cache@v3
+      uses: actions/cache@v5
       with:
         path: ~/.platformio
         key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
+      with:
+        python-version: '3.x'
     - name: Install PlatformIO
       run: |
         python -m pip install --upgrade pip
-        pip install --upgrade platformio
+        pip install --upgrade platformio intelhex
     - name: Install library dependencies
       run: pio pkg install -g -l "paulstoffregen/Time@^1.6"
     - name: Run PlatformIO
