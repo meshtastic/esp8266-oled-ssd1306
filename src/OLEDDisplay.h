@@ -165,11 +165,11 @@ class OLEDDisplay : public Stream {
 #endif
 
   public:
-	OLEDDisplay();
+	  OLEDDisplay();
     virtual ~OLEDDisplay();
 
-	uint16_t width(void) const { return displayWidth; };
-	uint16_t height(void) const { return displayHeight; };
+    uint16_t width(void) const { return displayWidth; };
+    uint16_t height(void) const { return displayHeight; };
 
     // Use this to resume after a deep sleep without resetting the display (what init() would do).
     // Returns true if connection to the display was established and the buffer allocated, false otherwise.
@@ -354,6 +354,9 @@ class OLEDDisplay : public Stream {
     // Set the correct height, width and buffer for the geometry
     void setGeometry(OLEDDISPLAY_GEOMETRY g, uint16_t width = 0, uint16_t height = 0);
 
+    // Get I2C Speed (to override)
+    virtual uint32_t getI2cFrequency() {return 0; }
+
   protected:
 
     OLEDDISPLAY_GEOMETRY geometry;
@@ -396,8 +399,6 @@ class OLEDDisplay : public Stream {
 
     uint16_t drawStringInternal(int16_t xMove, int16_t yMove, const char* text, uint16_t textLength, uint16_t textWidth, bool utf8);
 
-    // Get I2C Speed (to override)
-    virtual uint32_t getI2cFrequency() {return 0; }
 	FontTableLookupFunction fontTableLookupFunction;
 };
 
