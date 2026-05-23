@@ -57,6 +57,7 @@
 #define SH1106_SET_PUMP_MODE 0XAD
 #define SH1106_PUMP_ON 0X8B
 #define SH1106_PUMP_OFF 0X8A
+#define AUTOOLEDI2C_FREQUENCY 700000
 //--------------------------------------
 
 class AutoOLEDWire : public OLEDDisplay {
@@ -75,10 +76,10 @@ class AutoOLEDWire : public OLEDDisplay {
      * Create and initialize the Display using Wire library
      *
      * Beware for retro-compatibility default values are provided for all parameters see below.
-     * Please note that if you don't wan't SD1306Wire to initialize and change frequency speed ot need to 
+     * Please note that if you don't wan't SD1306Wire to initialize and change frequency speed ot need to
      * ensure -1 value are specified for all 3 parameters. This can be usefull to control TwoWire with multiple
      * device on the same bus.
-     * 
+     *
      * @param _address I2C Display address
      * @param _sda I2C SDA pin number, default to -1 to skip Wire begin call
      * @param _scl I2C SCL pin number, default to -1 (only SDA = -1 is considered to skip Wire begin call)
@@ -86,7 +87,7 @@ class AutoOLEDWire : public OLEDDisplay {
      * @param _i2cBus on ESP32 with 2 I2C HW buses, I2C_ONE for 1st Bus, I2C_TWO fot 2nd bus, default I2C_ONE
      * @param _frequency for Frequency by default Let's use ~700khz if ESP8266 is in 160Mhz mode, this will be limited to ~400khz if the ESP8266 in 80Mhz mode
      */
-    AutoOLEDWire(uint8_t _address, int _sda = -1, int _scl = -1, OLEDDISPLAY_GEOMETRY g = GEOMETRY_128_64, HW_I2C _i2cBus = I2C_ONE, int _frequency = 700000) {
+    AutoOLEDWire(uint8_t _address, int _sda = -1, int _scl = -1, OLEDDISPLAY_GEOMETRY g = GEOMETRY_128_64, HW_I2C _i2cBus = I2C_ONE, int _frequency = AUTOOLEDI2C_FREQUENCY) {
       setGeometry(g);
 
       this->_address = _address;
@@ -175,18 +176,18 @@ class AutoOLEDWire : public OLEDDisplay {
           sendCommand(COLUMNADDR);
           sendCommand(x_offset + minBoundX);
           sendCommand(x_offset + maxBoundX);
-  
+
           sendCommand(PAGEADDR);
           sendCommand(minBoundY);
           sendCommand(maxBoundY);
-  
+
           for (y = minBoundY; y <= maxBoundY; y++) {
             for (x = minBoundX; x <= maxBoundX; x++) {
               if (k == 0) {
                 _wire->beginTransmission(_address);
                 _wire->write(0x40);
               }
-  
+
               _wire->write(buffer[x + y * this->width()]);
               k++;
               if (k == (I2C_MAX_TRANSFER_BYTE - 1)) {
@@ -206,7 +207,7 @@ class AutoOLEDWire : public OLEDDisplay {
             minBoundXp2H = (minBoundX) & 0x0F;
             minBoundXp2L = 0x10 | ((minBoundX) >> 4 );
           }
-  
+
           for (y = minBoundY; y <= maxBoundY; y++) {
             sendCommand(0xB0 + y);
             sendCommand(minBoundXp2H);
@@ -239,10 +240,10 @@ class AutoOLEDWire : public OLEDDisplay {
           sendCommand(COLUMNADDR);
           sendCommand(x_offset);
           sendCommand(x_offset + (this->width() - 1));
-  
+
           sendCommand(PAGEADDR);
           sendCommand(0x0);
-  
+
           for (uint16_t i=0; i < displayBufferSize; i++) {
             _wire->beginTransmission(this->_address);
             _wire->write(0x40);
@@ -278,6 +279,11 @@ class AutoOLEDWire : public OLEDDisplay {
 
     void setDetected(uint8_t detected) {
       _detected = detected;
+    }
+
+    // Get I2C speed
+    virtual uint32_t getI2cFrequency() override {
+      return this->_frequency;
     }
 
   private:

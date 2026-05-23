@@ -297,7 +297,7 @@ class OLEDDisplay : public Stream {
     // normal brightness & contrast:  contrast = 100
     void setContrast(uint8_t contrast, uint8_t precharge = 241, uint8_t comdetect = 64);
 
-    // Convenience method to access 
+    // Convenience method to access
     virtual void setBrightness(uint8_t);
 
     // Reset display rotation or mirroring
@@ -396,6 +396,8 @@ class OLEDDisplay : public Stream {
 
     uint16_t drawStringInternal(int16_t xMove, int16_t yMove, const char* text, uint16_t textLength, uint16_t textWidth, bool utf8);
 
+    // Get I2C Speed (to override)
+    virtual uint32_t getI2cFrequency() {return 0; }
 	FontTableLookupFunction fontTableLookupFunction;
 };
 

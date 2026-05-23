@@ -30,6 +30,13 @@
 #ifndef SSD1306I2C_h
 #define SSD1306I2C_h
 
+// mbed supports 100k and 400k some device maybe 1000k
+#ifdef TARGET_STM32L4
+#define SSD1306I2C_FREQUENCY 1000000
+#else
+#define SSD1306I2C_FREQUENCY 400000
+#endif
+
 
 #ifdef __MBED__
 
@@ -42,22 +49,18 @@
 
 class SSD1306I2C : public OLEDDisplay {
 public:
-    SSD1306I2C(uint8_t _address, PinName _sda, PinName _scl, OLEDDISPLAY_GEOMETRY g = GEOMETRY_128_64) {
+    SSD1306I2C(uint8_t _address, PinName _sda, PinName _scl, OLEDDISPLAY_GEOMETRY g = GEOMETRY_128_64, int _frequency = SSD1306I2C_FREQUENCY) {
       setGeometry(g);
 
       this->_address = _address << 1;  // convert from 7 to 8 bit for mbed.
       this->_sda = _sda;
       this->_scl = _scl;
+      this->_frequency = _frequency;
 	  _i2c = new I2C(_sda, _scl);
     }
 
     bool connect() {
-		// mbed supports 100k and 400k some device maybe 1000k
-#ifdef TARGET_STM32L4
-	  _i2c->frequency(1000000);
-#else
-	  _i2c->frequency(400000);
-#endif
+	    _i2c->frequency(this->_frequency);
       return true;
     }
 
@@ -104,7 +107,7 @@ public:
         for (y = minBoundY; y <= maxBoundY; y++) {
 			uint8_t *start = &buffer[(minBoundX + y * this->width())-1];
 			uint8_t save = *start;
-			
+
 			*start = 0x40; // control
 			_i2c->write(_address, (char *)start, (maxBoundX-minBoundX) + 1 + 1);
 			*start = save;
@@ -127,6 +130,12 @@ public:
 		buffer[-1] = 0x40; // control
 		_i2c->write(_address, (char *)&buffer[-1], displayBufferSize + 1);
 #endif
+    }
+
+
+    // Get I2C speed
+    virtual uint32_t getI2cFrequency() override {
+      return this->_frequency;
     }
 
 private:
