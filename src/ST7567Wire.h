@@ -34,8 +34,9 @@
 #include "OLEDDisplay.h"
 #include <Wire.h>
 
+#ifndef ST7567I2C_FREQUENCY
 #define ST7567I2C_FREQUENCY 700000
-
+#endif
 //--------------------------------------
 
 class ST7567Wire : public OLEDDisplay

@@ -33,12 +33,13 @@
 #ifdef __MBED__
 
 // mbed supports 100k and 400k some device maybe 1000k
+#ifndef SSD1306I2C_FREQUENCY
 #ifdef TARGET_STM32L4
 #define SSD1306I2C_FREQUENCY 1000000
 #else
 #define SSD1306I2C_FREQUENCY 400000
 #endif
-
+#endif
 
 #include "OLEDDisplay.h"
 #include <mbed.h>

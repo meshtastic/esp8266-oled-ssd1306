@@ -44,7 +44,9 @@
 #define SH1106_SET_PUMP_MODE 0XAD
 #define SH1106_PUMP_ON 0X8B
 #define SH1106_PUMP_OFF 0X8A
+#ifndef SH1106I2C_FREQUENCY
 #define SH1106I2C_FREQUENCY 700000
+#endif
 //--------------------------------------
 
 class SH1106Wire : public OLEDDisplay {

@@ -44,7 +44,9 @@
 #else
 #define I2C_MAX_TRANSFER_BYTE 17
 #endif
+#ifndef SSD1306_WIRE_I2C_FREQUENCY
 #define SSD1306_WIRE_I2C_FREQUENCY 700000
+#endif
 //--------------------------------------
 
 class SSD1306Wire : public OLEDDisplay {
