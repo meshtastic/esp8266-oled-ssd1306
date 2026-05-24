@@ -44,7 +44,7 @@
 #else
 #define I2C_MAX_TRANSFER_BYTE 17
 #endif
-#define SSD1306I2C_FREQUENCY 700000
+#define SSD1306_WIRE_I2C_FREQUENCY 700000
 //--------------------------------------
 
 class SSD1306Wire : public OLEDDisplay {
@@ -74,7 +74,7 @@ class SSD1306Wire : public OLEDDisplay {
      * @param _i2cBus on ESP32 with 2 I2C HW buses, I2C_ONE for 1st Bus, I2C_TWO fot 2nd bus, default I2C_ONE
      * @param _frequency for Frequency by default Let's use ~700khz if ESP8266 is in 160Mhz mode, this will be limited to ~400khz if the ESP8266 in 80Mhz mode
      */
-    SSD1306Wire(uint8_t _address, int _sda = -1, int _scl = -1, OLEDDISPLAY_GEOMETRY g = GEOMETRY_128_64, HW_I2C _i2cBus = I2C_ONE, int _frequency = SSD1306I2C_FREQUENCY) {
+    SSD1306Wire(uint8_t _address, int _sda = -1, int _scl = -1, OLEDDISPLAY_GEOMETRY g = GEOMETRY_128_64, HW_I2C _i2cBus = I2C_ONE, int _frequency = SSD1306_WIRE_I2C_FREQUENCY) {
       setGeometry(g);
 
       this->_address = _address;
