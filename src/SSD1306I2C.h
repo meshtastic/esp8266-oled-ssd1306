@@ -30,6 +30,8 @@
 #ifndef SSD1306I2C_h
 #define SSD1306I2C_h
 
+#ifdef __MBED__
+
 // mbed supports 100k and 400k some device maybe 1000k
 #ifdef TARGET_STM32L4
 #define SSD1306I2C_FREQUENCY 1000000
@@ -38,13 +40,11 @@
 #endif
 
 
-#ifdef __MBED__
-
 #include "OLEDDisplay.h"
 #include <mbed.h>
 
 #ifndef UINT8_MAX
- #define UINT8_MAX 0xff
+#define UINT8_MAX 0xff
 #endif
 
 class SSD1306I2C : public OLEDDisplay {
