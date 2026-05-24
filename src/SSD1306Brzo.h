@@ -45,6 +45,7 @@ class SSD1306Brzo : public OLEDDisplay {
       uint8_t             _address;
       uint8_t             _sda;
       uint8_t             _scl;
+      int                 _frequency;
 
   public:
     SSD1306Brzo(uint8_t _address, uint8_t _sda, uint8_t _scl, OLEDDISPLAY_GEOMETRY g = GEOMETRY_128_64, int _frequency = BRZO_I2C_SPEED) {

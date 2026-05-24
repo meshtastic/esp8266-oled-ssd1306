@@ -57,7 +57,7 @@ public:
       this->_sda = _sda;
       this->_scl = _scl;
       this->_frequency = _frequency;
-	  _i2c = new I2C(_sda, _scl);
+	    _i2c = new I2C(_sda, _scl);
     }
 
     bool connect() {
@@ -154,6 +154,7 @@ private:
 	uint8_t             _address;
 	PinName             _sda;
 	PinName             _scl;
+  int                 _frequency;
 	I2C *_i2c;
 };
 

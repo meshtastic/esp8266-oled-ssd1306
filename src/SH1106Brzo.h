@@ -45,6 +45,7 @@ class SH1106Brzo : public OLEDDisplay {
       uint8_t             _address;
       uint8_t             _sda;
       uint8_t             _scl;
+      int                 _frequency;
 
   public:
 	SH1106Brzo(uint8_t _address, uint8_t _sda, uint8_t _scl, OLEDDISPLAY_GEOMETRY g = GEOMETRY_128_64, int _frequency = BRZO_I2C_SPEED) {
@@ -133,9 +134,9 @@ class SH1106Brzo : public OLEDDisplay {
     }
 
   private:
-	int getBufferOffset(void) {
-		return 0;
-	}
+    int getBufferOffset(void) {
+      return 0;
+    }
     inline void sendCommand(uint8_t com) __attribute__((always_inline)){
       uint8_t command[2] = {0x80 /* command mode */, com};
       brzo_i2c_start_transaction(_address, this->_frequency);

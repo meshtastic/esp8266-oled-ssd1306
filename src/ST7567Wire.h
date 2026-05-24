@@ -42,11 +42,11 @@
 class ST7567Wire : public OLEDDisplay
 {
   private:
-    uint8_t _address;
-    int _sda;
-    int _scl;
-    boolean _doI2cAutoInit = false;
-    int _frequency;
+    uint8_t             _address;
+    int                 _sda;
+    int                 _scl;
+    boolean             _doI2cAutoInit = false;
+    int                 _frequency;
 
   public:
     ST7567Wire(uint8_t _address, int _sda = -1, int _scl = -1, OLEDDISPLAY_GEOMETRY g = GEOMETRY_128_64, int _frequency = ST7567I2C_FREQUENCY)
