@@ -68,7 +68,8 @@ class ST7567Wire : public OLEDDisplay
 #endif
         // Let's use ~700khz if ESP8266 is in 160Mhz mode
         // this will be limited to ~400khz if the ESP8266 in 80Mhz mode.
-        Wire.setClock(this->_frequency);
+        if(this->_frequency != -1)
+            Wire.setClock(this->_frequency);
         return true;
     }
 
@@ -168,7 +169,7 @@ class ST7567Wire : public OLEDDisplay
 
     // Get I2C speed
     virtual uint32_t getI2cFrequency() override {
-      return this->_frequency;
+      return this->_frequency < 0 ? 0U : static_cast<uint32_t>(this->_frequency);
     }
 
   protected:

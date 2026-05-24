@@ -355,7 +355,8 @@ class OLEDDisplay : public Stream {
     void setGeometry(OLEDDISPLAY_GEOMETRY g, uint16_t width = 0, uint16_t height = 0);
 
     // Get I2C Speed (to override)
-    virtual uint32_t getI2cFrequency() {return 0; }
+    // Screens that don't set the speed, for any reason, they return 0
+    virtual uint32_t getI2cFrequency() { return 0; }
 
   protected:
 

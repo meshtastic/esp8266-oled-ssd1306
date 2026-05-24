@@ -203,7 +203,7 @@ class SH1106Wire : public OLEDDisplay {
 
     // Get I2C speed
     virtual uint32_t getI2cFrequency() override {
-      return this->_frequency;
+      return this->_frequency < 0 ? 0U : static_cast<uint32_t>(this->_frequency);
     }
 
   private:
