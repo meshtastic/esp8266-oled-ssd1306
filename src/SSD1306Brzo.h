@@ -35,9 +35,9 @@
 #include <brzo_i2c.h>
 
 #if F_CPU == 160000000L
-  #define BRZO_I2C_SPEED 1000
+  #define BRZO_I2C_SPEED 1000000
 #else
-  #define BRZO_I2C_SPEED 800
+  #define BRZO_I2C_SPEED 800000
 #endif
 
 class SSD1306Brzo : public OLEDDisplay {
@@ -139,7 +139,8 @@ class SSD1306Brzo : public OLEDDisplay {
        uint8_t sendBuffer[buflen];
        sendBuffer[0] = 0x40;
 
-       brzo_i2c_start_transaction(this->_address, this->_frequency);
+       uint32_t _frequency_khz = this->_frequency / 1000;
+       brzo_i2c_start_transaction(this->_address, _frequency_khz); // brzo_i2c_start_transaction expects kHz
 
        for (uint16_t i=0; i<displayBufferSize; i++) {
          for (uint8_t x=1; x<buflen; x++) {
@@ -157,7 +158,7 @@ class SSD1306Brzo : public OLEDDisplay {
 
     // Get I2C speed
     virtual uint32_t getI2cFrequency() override {
-      return this->_frequency * 1000;
+      return this->_frequency;
     }
 
   private:
@@ -166,7 +167,8 @@ class SSD1306Brzo : public OLEDDisplay {
 	}
     inline void sendCommand(uint8_t com) __attribute__((always_inline)){
       uint8_t command[2] = {0x80 /* command mode */, com};
-      brzo_i2c_start_transaction(this->_address, this->_frequency);
+      uint32_t _frequency_khz = this->_frequency / 1000;
+      brzo_i2c_start_transaction(this->_address, _frequency_khz); // brzo_i2c_start_transaction expects kHz
       brzo_i2c_write(command, 2, true);
       brzo_i2c_end_transaction();
     }
