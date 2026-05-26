@@ -165,11 +165,11 @@ class OLEDDisplay : public Stream {
 #endif
 
   public:
-	OLEDDisplay();
+	  OLEDDisplay();
     virtual ~OLEDDisplay();
 
-	uint16_t width(void) const { return displayWidth; };
-	uint16_t height(void) const { return displayHeight; };
+    uint16_t width(void) const { return displayWidth; };
+    uint16_t height(void) const { return displayHeight; };
 
     // Use this to resume after a deep sleep without resetting the display (what init() would do).
     // Returns true if connection to the display was established and the buffer allocated, false otherwise.
@@ -297,7 +297,7 @@ class OLEDDisplay : public Stream {
     // normal brightness & contrast:  contrast = 100
     void setContrast(uint8_t contrast, uint8_t precharge = 241, uint8_t comdetect = 64);
 
-    // Convenience method to access 
+    // Convenience method to access
     virtual void setBrightness(uint8_t);
 
     // Reset display rotation or mirroring
@@ -353,6 +353,10 @@ class OLEDDisplay : public Stream {
 
     // Set the correct height, width and buffer for the geometry
     void setGeometry(OLEDDISPLAY_GEOMETRY g, uint16_t width = 0, uint16_t height = 0);
+
+    // Get I2C Speed (to override)
+    // Screens that don't set the speed, for any reason, they return 0
+    virtual uint32_t getI2cFrequency() { return 0; }
 
   protected:
 

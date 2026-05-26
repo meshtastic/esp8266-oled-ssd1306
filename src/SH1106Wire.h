@@ -44,6 +44,9 @@
 #define SH1106_SET_PUMP_MODE 0XAD
 #define SH1106_PUMP_ON 0X8B
 #define SH1106_PUMP_OFF 0X8A
+#ifndef SH1106I2C_FREQUENCY
+#define SH1106I2C_FREQUENCY 700000
+#endif
 //--------------------------------------
 
 class SH1106Wire : public OLEDDisplay {
@@ -72,7 +75,7 @@ class SH1106Wire : public OLEDDisplay {
      * @param _i2cBus on ESP32 with 2 I2C HW buses, I2C_ONE for 1st Bus, I2C_TWO fot 2nd bus, default I2C_ONE
      * @param _frequency for Frequency by default Let's use ~700khz if ESP8266 is in 160Mhz mode, this will be limited to ~400khz if the ESP8266 in 80Mhz mode
      */
-    SH1106Wire(uint8_t _address, int _sda = -1, int _scl = -1, OLEDDISPLAY_GEOMETRY g = GEOMETRY_128_64, HW_I2C _i2cBus = I2C_ONE, int _frequency = 700000) {
+    SH1106Wire(uint8_t _address, int _sda = -1, int _scl = -1, OLEDDISPLAY_GEOMETRY g = GEOMETRY_128_64, HW_I2C _i2cBus = I2C_ONE, int _frequency = SH1106I2C_FREQUENCY) {
       setGeometry(g);
 
       this->_address = _address;
@@ -138,7 +141,7 @@ class SH1106Wire : public OLEDDisplay {
         // Calculate the colum offset
         uint8_t minBoundXp2H = (minBoundX + 2) & 0x0F;
         uint8_t minBoundXp2L = 0x10 | ((minBoundX + 2) >> 4 );
-        
+
         if (_subtype == 7) {
           // we have an SH1107
           minBoundXp2H = (minBoundX) & 0x0F;
@@ -196,6 +199,11 @@ class SH1106Wire : public OLEDDisplay {
 
     void setSubtype(uint8_t subtype) {
       _subtype = subtype;
+    }
+
+    // Get I2C speed
+    virtual uint32_t getI2cFrequency() override {
+      return this->_frequency < 0 ? 0U : static_cast<uint32_t>(this->_frequency);
     }
 
   private:

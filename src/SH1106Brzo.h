@@ -35,9 +35,9 @@
 #include <brzo_i2c.h>
 
 #if F_CPU == 160000000L
-  #define BRZO_I2C_SPEED 1000
+  #define BRZO_I2C_SPEED 1000000
 #else
-  #define BRZO_I2C_SPEED 800
+  #define BRZO_I2C_SPEED 800000
 #endif
 
 class SH1106Brzo : public OLEDDisplay {
@@ -45,14 +45,16 @@ class SH1106Brzo : public OLEDDisplay {
       uint8_t             _address;
       uint8_t             _sda;
       uint8_t             _scl;
+      int                 _frequency;
 
   public:
-	SH1106Brzo(uint8_t _address, uint8_t _sda, uint8_t _scl, OLEDDISPLAY_GEOMETRY g = GEOMETRY_128_64) {
+	SH1106Brzo(uint8_t _address, uint8_t _sda, uint8_t _scl, OLEDDISPLAY_GEOMETRY g = GEOMETRY_128_64, int _frequency = BRZO_I2C_SPEED) {
 		setGeometry(g);
 
       this->_address = _address;
       this->_sda = _sda;
       this->_scl = _scl;
+      this->_frequency = _frequency;
     }
 
     bool connect(){
@@ -98,7 +100,8 @@ class SH1106Brzo : public OLEDDisplay {
        uint8_t minBoundXp2H = (minBoundX + 2) & 0x0F;
        uint8_t minBoundXp2L = 0x10 | ((minBoundX + 2) >> 4 );
 
-       brzo_i2c_start_transaction(this->_address, BRZO_I2C_SPEED);
+       uint32_t _frequency_khz = this->_frequency / 1000;
+       brzo_i2c_start_transaction(this->_address, _frequency_khz); // brzo_i2c_start_transaction expects kHz
 
        for (y = minBoundY; y <= maxBoundY; y++) {
          sendCommand(0xB0 + y);
@@ -126,13 +129,19 @@ class SH1106Brzo : public OLEDDisplay {
      #endif
     }
 
+    // Get I2C speed
+    virtual uint32_t getI2cFrequency() override {
+      return this->_frequency;
+    }
+
   private:
-	int getBufferOffset(void) {
-		return 0;
-	}
+    int getBufferOffset(void) {
+      return 0;
+    }
     inline void sendCommand(uint8_t com) __attribute__((always_inline)){
       uint8_t command[2] = {0x80 /* command mode */, com};
-      brzo_i2c_start_transaction(_address, BRZO_I2C_SPEED);
+      uint32_t _frequency_khz = this->_frequency / 1000;
+      brzo_i2c_start_transaction(this->_address, _frequency_khz); // brzo_i2c_start_transaction expects kHz
       brzo_i2c_write(command, 2, true);
       brzo_i2c_end_transaction();
     }

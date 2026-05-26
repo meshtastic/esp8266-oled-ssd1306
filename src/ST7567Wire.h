@@ -34,22 +34,27 @@
 #include "OLEDDisplay.h"
 #include <Wire.h>
 
+#ifndef ST7567I2C_FREQUENCY
+#define ST7567I2C_FREQUENCY 700000
+#endif
 //--------------------------------------
 
 class ST7567Wire : public OLEDDisplay
 {
   private:
-    uint8_t _address;
-    int _sda;
-    int _scl;
-    boolean _doI2cAutoInit = false;
+    uint8_t             _address;
+    int                 _sda;
+    int                 _scl;
+    boolean             _doI2cAutoInit = false;
+    int                 _frequency;
 
   public:
-    ST7567Wire(uint8_t _address, int _sda = -1, int _scl = -1, OLEDDISPLAY_GEOMETRY g = GEOMETRY_128_64)
+    ST7567Wire(uint8_t _address, int _sda = -1, int _scl = -1, OLEDDISPLAY_GEOMETRY g = GEOMETRY_128_64, int _frequency = ST7567I2C_FREQUENCY)
     {
         this->_address = _address;
         this->_sda = _sda;
         this->_scl = _scl;
+        this->_frequency = _frequency;
     }
 
     bool connect()
@@ -63,7 +68,8 @@ class ST7567Wire : public OLEDDisplay
 #endif
         // Let's use ~700khz if ESP8266 is in 160Mhz mode
         // this will be limited to ~400khz if the ESP8266 in 80Mhz mode.
-        Wire.setClock(700000);
+        if(this->_frequency != -1)
+            Wire.setClock(this->_frequency);
         return true;
     }
 
@@ -160,6 +166,11 @@ class ST7567Wire : public OLEDDisplay
     }
 
     void setI2cAutoInit(boolean doI2cAutoInit) { _doI2cAutoInit = doI2cAutoInit; }
+
+    // Get I2C speed
+    virtual uint32_t getI2cFrequency() override {
+      return this->_frequency < 0 ? 0U : static_cast<uint32_t>(this->_frequency);
+    }
 
   protected:
     // Send all the init commands
