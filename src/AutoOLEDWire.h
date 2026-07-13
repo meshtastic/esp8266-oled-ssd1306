@@ -258,17 +258,22 @@ class AutoOLEDWire : public OLEDDisplay {
           }
         }else{
           uint8_t * p = &buffer[0];
-          for (uint8_t y=0; y<8; y++) {
+          uint8_t colOffset = (this->_detected == SH1107_DETECTED) ? 0x00 : 0x02;
+          uint8_t pages = (displayHeight + 7) / 8;
+          for (uint8_t y=0; y<pages; y++) {
             sendCommand(0xB0+y);
-            sendCommand(0x02);
+            sendCommand(colOffset);
             sendCommand(0x10);
-            for( uint8_t x=0; x<(128/I2C_OLED_TRANSFER_BYTE); x++) {
+            uint16_t remaining = displayWidth;
+            while (remaining > 0) {
+              uint8_t blockLen = (remaining > I2C_OLED_TRANSFER_BYTE) ? I2C_OLED_TRANSFER_BYTE : remaining;
               _wire->beginTransmission(_address);
               _wire->write(0x40);
-              for (uint8_t k = 0; k < I2C_OLED_TRANSFER_BYTE; k++) {
+              for (uint8_t k = 0; k < blockLen; k++) {
                 _wire->write(*p++);
               }
               _wire->endTransmission();
+              remaining -= blockLen;
             }
           }
         }
