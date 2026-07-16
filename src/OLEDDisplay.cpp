@@ -52,6 +52,11 @@ OLEDDisplay::OLEDDisplay() {
 #ifdef OLEDDISPLAY_DOUBLE_BUFFER
 	buffer_back = NULL;
 #endif
+	logBufferSize = 0;
+	logBufferFilled = 0;
+	logBufferLine = 0;
+	logBufferMaxLines = 0;
+	logBuffer = NULL;
 }
 
 OLEDDisplay::~OLEDDisplay() {
@@ -60,11 +65,11 @@ OLEDDisplay::~OLEDDisplay() {
 
 bool OLEDDisplay::allocateBuffer() {
 
-  logBufferSize = 0;
-  logBufferFilled = 0;
-  logBufferLine = 0;
-  logBufferMaxLines = 0;
-  logBuffer = NULL;
+  // Note: don't reset the log buffer state here. It is initialized by the
+  // constructor, and init() may be called again on an already-initialized
+  // display; resetting the fields here would leak the buffer allocated by
+  // setLogBuffer() and silently disable on-screen logging (logBufferSize
+  // would stay 0 until setLogBuffer() is called again).
 
   if (!connect()) {
     DEBUG_OLEDDISPLAY("[OLEDDISPLAY][init] Can't establish connection to display\n");
