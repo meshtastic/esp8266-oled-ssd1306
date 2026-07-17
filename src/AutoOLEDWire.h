@@ -245,6 +245,12 @@ class AutoOLEDWire : public OLEDDisplay {
 
           sendCommand(PAGEADDR);
           sendCommand(0x0);
+          // PAGEADDR (0x22) requires BOTH start and end parameters. Omitting the
+          // end page leaves the command parser waiting, and the next command byte
+          // sent (e.g. SEGREMAP from flipScreenVertically(), or the next frame's
+          // COLUMNADDR) is silently consumed as the end-page value — mirroring
+          // and/or collapsing the addressing window.
+          sendCommand((this->height() / 8) - 1);
 
           for (uint16_t i=0; i < displayBufferSize; i++) {
             _wire->beginTransmission(this->_address);
