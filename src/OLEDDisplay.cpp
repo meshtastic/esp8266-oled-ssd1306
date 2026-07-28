@@ -1020,9 +1020,9 @@ void OLEDDisplay::sendInitCommands(void) {
   	return;
   sendCommand(DISPLAYOFF);
   sendCommand(SETDISPLAYCLOCKDIV);
-  sendCommand(0xF0); // Increase speed of the display max ~96Hz
+  sendCommand(geometry == GEOMETRY_72_40 ? 0x80 : 0xF0);
   sendCommand(SETMULTIPLEX);
-  sendCommand(this->height() - 1);
+  sendCommand(geometry == GEOMETRY_72_40 ? 0x3F : this->height() - 1);
   sendCommand(SETDISPLAYOFFSET);
   sendCommand(0x00);
   if(geometry == GEOMETRY_64_32)
@@ -1037,7 +1037,8 @@ void OLEDDisplay::sendInitCommands(void) {
   sendCommand(COMSCANINC);
   sendCommand(SETCOMPINS);
 
-  if (geometry == GEOMETRY_128_128 || geometry == GEOMETRY_128_64 || geometry == GEOMETRY_64_48 || geometry == GEOMETRY_64_32) {
+  if (geometry == GEOMETRY_128_128 || geometry == GEOMETRY_128_64 || geometry == GEOMETRY_64_48 ||
+      geometry == GEOMETRY_64_32 || geometry == GEOMETRY_72_40) {
     sendCommand(0x12);
   } else if (geometry == GEOMETRY_128_32) {
     sendCommand(0x02);
@@ -1045,7 +1046,8 @@ void OLEDDisplay::sendInitCommands(void) {
 
   sendCommand(SETCONTRAST);
 
-  if (geometry == GEOMETRY_128_128 || geometry == GEOMETRY_128_64 || geometry == GEOMETRY_64_48 || geometry == GEOMETRY_64_32) {
+  if (geometry == GEOMETRY_128_128 || geometry == GEOMETRY_128_64 || geometry == GEOMETRY_64_48 ||
+      geometry == GEOMETRY_64_32 || geometry == GEOMETRY_72_40) {
     sendCommand(0xCF);
   } else if (geometry == GEOMETRY_128_32) {
     sendCommand(0x8F);
@@ -1060,6 +1062,10 @@ void OLEDDisplay::sendInitCommands(void) {
   sendCommand(0x2e);            // stop scroll
   if (!delayPoweron)
     sendCommand(DISPLAYON);
+  if (geometry == GEOMETRY_72_40) {
+    sendCommand(0xAD);
+    sendCommand(0x10);
+  }
 }
 
 void inline OLEDDisplay::drawInternal(int16_t xMove, int16_t yMove, int16_t width, int16_t height, const uint8_t *data, uint16_t offset, uint16_t bytesInData) {
