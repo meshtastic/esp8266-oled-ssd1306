@@ -193,14 +193,13 @@ class SSD1306Wire : public OLEDDisplay {
         // and/or collapsing the addressing window.
         sendCommand(_y_offset + (this->height() / 8) - 1);
 
-        for (uint16_t i=0; i < displayBufferSize; i++) {
+        for (uint16_t i = 0; i < displayBufferSize;) {
           _wire->beginTransmission(this->_address);
           _wire->write(0x40);
-          for (uint8_t x = 0; x < (I2C_MAX_TRANSFER_BYTE - 1); x++) {
-            _wire->write(buffer[i]);
-            i++;
+          const uint8_t chunkSize = std::min<uint16_t>(I2C_MAX_TRANSFER_BYTE - 1, displayBufferSize - i);
+          for (uint8_t x = 0; x < chunkSize; x++) {
+            _wire->write(buffer[i++]);
           }
-          i--;
           _wire->endTransmission();
         }
       #endif
