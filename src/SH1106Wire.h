@@ -83,7 +83,7 @@ class SH1106Wire : public OLEDDisplay {
       this->_scl = _scl;
 #if !defined(ARDUINO_ARCH_ESP32) && !defined(ARCH_RP2040)
       this->_wire = &Wire;
-#elif defined(CONFIG_IDF_TARGET_ESP32C6)
+#elif defined(SOC_HP_I2C_NUM) && SOC_HP_I2C_NUM < 2 // ESP32-C2/C3/C6/...: single HW I2C bus, no Wire1
       this->_wire = &Wire;
 #else
       this->_wire = (_i2cBus==I2C_ONE) ? &Wire : &Wire1;
