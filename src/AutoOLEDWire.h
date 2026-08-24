@@ -97,7 +97,7 @@ class AutoOLEDWire : public OLEDDisplay {
       this->_scl = _scl;
 #if !defined(ARDUINO_ARCH_ESP32) && !defined(ARCH_RP2040)
       this->_wire = &Wire;
-#elif defined(SOC_HP_I2C_NUM) && SOC_HP_I2C_NUM < 2 // ESP32-C2/C3/C6/...: single HW I2C bus, no Wire1
+#elif defined(SOC_HP_I2C_NUM) && SOC_HP_I2C_NUM < 2 // ESP32-C2/C3/C6/...: one HP I2C controller, use Wire
       this->_wire = &Wire;
 #else
       this->_wire = (_i2cBus==I2C_ONE) ? &Wire : &Wire1;
